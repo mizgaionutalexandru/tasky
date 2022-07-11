@@ -71,19 +71,25 @@ body{
     position: relative;
 }
 
-.list__options-cta:hover{
-    cursor: pointer;
-}
-
-.list__options-cta:hover::before{
+.list__options-cta::before{
+    background-color: white;
+    transition: background-color 100ms ease-in;
     content: "";
     border-radius: 50%;
     height: 100%;
     width: 100%;
     position: absolute;
+    z-index: 2;
+
+}
+
+.list__options-cta:hover{
+    cursor: pointer;
+}
+
+.list__options-cta:hover::before{
     background-color: var(--grey-three);
     opacity: 0.6;
-    z-index: 2;
 }
 
 .list__options-cta__svg{
@@ -104,7 +110,6 @@ body{
     width: 100%;
     border: 1px solid var(--grey-three);
     font-size: 2rem;
-    padding: 0.4rem 1.2rem;
 }
 
 .list__option {
@@ -112,4 +117,16 @@ body{
     justify-content: space-between;
     align-items: center;
     line-height: 1.6;
+    padding: 0.4rem 1.2rem 0.4rem 1.2rem;
+    transition: background-color 100ms ease-in;
+
+}
+
+.list__option:first-child{
+    border-bottom: 1px solid var(--grey-three);
+}
+
+.list__option:hover{
+    background-color: var(--grey-four);
+    cursor: pointer;
 }
