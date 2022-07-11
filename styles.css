@@ -29,6 +29,7 @@ body{
     height: max(64rem, 70%);
     display: flex;
     border-radius: 0.8rem;
+    z-index: 1;
 }
 
 .nav-container{
@@ -47,7 +48,7 @@ body{
 }
 
 .list{
-    width: 14rem;
+    width: 14.8rem;
     display: flex;
     margin-inline: auto;
     justify-content: space-between;
@@ -61,8 +62,37 @@ body{
     color: var(--grey-one);
 }
 
-.list__options-cta{
+.list__options-cta {
+    width: 3.2rem;
+    height: 3.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.list__options-cta:hover{
+    cursor: pointer;
+}
+
+.list__options-cta:hover::before{
+    content: "";
+    border-radius: 50%;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background-color: var(--grey-three);
+    opacity: 0.6;
+    z-index: 2;
+}
+
+.list__options-cta__svg{
     height: 1.8rem;
+    z-index: 4;
+}
+
+.list__options-cta__svg:hover{
+    cursor: pointer;
 }
 
 .list__options {
