@@ -232,9 +232,11 @@ body{
 }
 
 .item__info{
+    --gap: 2rem;
+    --width: 3.2rem;
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: var(--gap);
 }
 
 .item{
@@ -258,8 +260,8 @@ body{
 
 .item__input{
     opacity: 0;
-    width: 3.2rem;
-    height: 3.2rem;
+    width: var(--width);
+    height: var(--width);
 }
 
 .item__label{
@@ -274,8 +276,34 @@ body{
     width: 3rem;
     height: 3rem;
     position: absolute;
-    left: calc(-3.2rem - 2rem);
+    left: calc( -1 * var(--width) - var(--gap));
     cursor: pointer;
+}
+
+.item__input:focus + .item__label::after{
+    content: "";
+    background: url('./assets/arrow.svg');
+    background-position: center;
+    background-size: contain;
+    width: 3.2rem;
+    height: 3.2rem;
+    position: absolute;
+    left: calc(-2 * var(--width) - var(--gap));
+    animation: right-left 1s ;
+    animation-iteration-count: infinite;
+}
+
+@keyframes right-left {
+    from{
+        transform: translateX(0);
+    }
+    50%{
+        transform: translateX(-1rem);
+    }
+    to{
+        transform: translateX(0);
+    }
+    
 }
 
 .item__options-cta {
