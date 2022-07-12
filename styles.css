@@ -113,6 +113,17 @@ body{
     cursor: pointer;
 }
 
+.list__name__input{
+    border: 0;
+    outline: 0;
+    font-size: 2.4rem;
+    font-family: 'Lato', sans-serif;
+    color: var(--grey-one);
+    border-bottom: 1px solid var(--grey-three);
+    width: 5rem;
+    min-width: 5rem;
+}
+
 .list__options-cta {
     width: 3.2rem;
     height: 3.2rem;
