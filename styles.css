@@ -251,9 +251,11 @@ body{
     border-top: 1px solid white;
     border-bottom: 1px solid white;
     position: relative;
+    outline: 0;
 }
 
-.item:hover, .item--options-visible {
+.item:hover, .item--options-visible,
+.item:focus {
     border-top: 1px solid var(--grey-four);
     border-bottom: 1px solid var(--grey-four);
 }
@@ -280,7 +282,7 @@ body{
     cursor: pointer;
 }
 
-.item__input:focus + .item__label::after{
+.item:focus .item__label::after{
     content: "";
     background: url('./assets/arrow.svg');
     background-position: center;
@@ -306,6 +308,17 @@ body{
     
 }
 
+.item__label__input{
+    border: 0;
+    outline: 0;
+    font-size: 2.4rem;
+    font-family: 'Lato', sans-serif;
+    color: var(--grey-one);
+    border-bottom: 1px solid var(--grey-three);
+    width: 5rem;
+    min-width: 5rem;
+}
+
 .item__options-cta {
     width: 3.6rem;
     height: 3.6rem;
@@ -318,6 +331,7 @@ body{
 }
 
 .item:hover .item__options-cta, 
+.item:focus .item__options-cta,
 .item--options-visible .item__options-cta{
     opacity: 1;
 }
