@@ -8,9 +8,14 @@ import * as model from "./model.js";
  * @param {object} [options] - status: new / old, name, id
  */
 const listsController = (action, options) => {
-  if (action === "save") {
+  if (action === "save" && options.status === "new") {
+    model.saveList(options);
+    listsView.update(model.lists);
+    model.upload();
+  } else if (action === "save" && options.status === "old") {
     model.updateLists(options);
     listsView.update(model.lists);
+    model.upload();
   }
   if (action === "create") {
     listsView.renderNewList();
@@ -18,6 +23,7 @@ const listsController = (action, options) => {
 };
 
 const init = () => {
+  listsView.update(model.lists);
   listsView.addHandlerClick(listsController);
 };
 

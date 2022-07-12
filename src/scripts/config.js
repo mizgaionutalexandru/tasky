@@ -1,1 +1,1 @@
-export const ACTION_KEY = " ";
+export const ACTION_KEY = "Enter";

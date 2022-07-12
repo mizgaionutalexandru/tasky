@@ -1,4 +1,4 @@
-import { qs, qsa } from "./helpers.js";
+import { makeId, qs } from "./helpers.js";
 import { ACTION_KEY } from "./config.js";
 
 class ListsView {
@@ -10,51 +10,78 @@ class ListsView {
   addHandlerClick(handler) {
     this._parentElement.addEventListener("click", (e) => {
       // 1) CLICK on 'create new list' button
-      if (e.target.closest(".list-add")) return this._addNewListAction(handler);
+      if (e.target.closest(".list-add")) {
+        if (this._isNewListInputOpen)
+          // Save the previous new list input as a new list
+          handler("save", {
+            status: "new",
+            name: qs(".list__name__input").value,
+          });
+        // Create a new one
+        return handler("create");
+      }
+
+      // 2) CLICK on a list name
+      const listNamePressed = e.target.closest(".list__name");
+      if (listNamePressed && !listNamePressed.closest(".list--new"))
+        return handler("save", {
+          status: "old",
+          id: listNamePressed.closest(".list").dataset.id, // needed to indentify the list
+          active: true,
+        });
     });
 
     this._parentElement.addEventListener("keydown", (e) => {
+      const activeEl = document.activeElement;
       // 1) ACTION KEY when the focused element is 'create new list' button
-      if (document.activeElement.closest(".list-add") && e.key === ACTION_KEY)
-        return this._addNewListAction(handler);
-      // 1) Enter key when the focused element is 'new list' input
-      if (document.activeElement.classList.contains("list__name__input")) {
+      if (activeEl.closest(".list-add") && e.key === ACTION_KEY) {
+        if (this._isNewListInputOpen)
+          // Save the previous new list input as a new list
+          handler("save", {
+            status: "new",
+            name: qs(".list__name__input").value,
+          });
+        // Create a new one
+        handler("create");
+      }
+
+      // 2) Enter key when the focused element is 'new list' input
+      if (activeEl.classList.contains("list__name__input")) {
         if (e.key === "Enter") {
+          // Save the list's name
+          const listId = makeId(9);
           this._isNewListInputOpen = false;
-          return this._saveListName(handler);
+          handler("save", {
+            status: "new",
+            name: qs(".list__name__input").value,
+            id: listId,
+          });
+          return qs(`[data-id=${listId}]`).focus();
         } else if (e.key === "Escape") {
+          // Cancel the new list
           this._isNewListInputOpen = false;
-          return this._cancelNewList();
+          return qs(".list--new")?.remove();
         }
+      }
+
+      // 3) ACTION KEY when the focused element is a list
+      const listEngaged = activeEl.closest(".list:not(.list--new)");
+      if (listEngaged && e.key === ACTION_KEY) {
+        const listId = listEngaged.dataset.id;
+        handler("save", {
+          status: "old",
+          id: listId, // needed to indentify the list
+          active: true,
+        });
+        // Focus the newly active list
+        return qs(`[data-id=${listId}]`).focus();
       }
     });
   }
 
-  _saveListName(handler) {
-    handler("save", {
-      status: "new",
-      name: qs(".list__name__input").value,
-    });
-  }
-
-  _cancelNewList() {
-    qs(".list--new").remove();
-  }
-
   /**
-   * Function called when user engages 'add new list' button.
-   * It creates a new list and saves the name of the previous one if it exists as an input
-   * by calling the handler function
+   * Inserts into the page the markup of a new list
    */
-  _addNewListAction(handler) {
-    if (this._isNewListInputOpen)
-      handler("save", {
-        status: "new",
-        name: qs(".list__name__input").value,
-      });
-    handler("create");
-  }
-
   renderNewList() {
     this._isNewListInputOpen = true;
     const markup = `
@@ -96,6 +123,10 @@ class ListsView {
     });
   }
 
+  /**
+   * Empties and renders (updates) the lists container
+   * @param {array} data - the lists to be rendered
+   */
   update(data) {
     this._data = data;
     this._listsContainer.innerHTML = "";
@@ -106,9 +137,13 @@ class ListsView {
     this._listsContainer.insertAdjacentHTML("beforeend", markup);
   }
 
+  /**
+   * Creates and returns the markup of a list to be rendered in the lists container
+   * @param {object} list
+   */
   _getListMarkup(list) {
     return `
-    <li tabindex="0" data-name="list_[${list.name}]" class="list ${
+    <li tabindex="0" data-id="${list.id}" class="list ${
       list.active ? "list--active" : ""
     }">
         <span class="list__name">${list.name}</span>
