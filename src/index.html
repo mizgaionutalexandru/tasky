@@ -13,7 +13,7 @@
     />
     <title>Tasky</title>
 
-    <script defer src="./scripts/index.js"></script>
+    <script defer type="module" src="./scripts/controller.js"></script>
   </head>
   <body>
     <!-- prettier-ignore-->
@@ -21,7 +21,7 @@
       <div class="nav-container">
         <ul class="lists">
             <!-- <li class="list list--active list--options-visible"> -->
-            <li tabindex="0" class="list list--active">
+            <li tabindex="0" data-name="list_[Personal]" class="list list--active">
                 <span class="list__name">Personal</span>
                 <span class="list__options-cta">
                     <svg  class="list__options-cta__svg" viewBox="0 0 6 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -46,7 +46,7 @@
                     </li>
                 </ul>
             </li>
-            <li tabindex="0" class="list">
+            <li tabindex="0" data-name="list_[Groceries]" class="list">
                 <span class="list__name">Groceries</span>
                 <span class="list__options-cta">
                     <svg  class="list__options-cta__svg" viewBox="0 0 6 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -71,7 +71,7 @@
                     </li>
                 </ul>
             </li>
-            <li tabindex="0" class="list">
+            <li tabindex="0" data-name="list_[College]" class="list">
                 <span class="list__name">College</span>
                 <span class="list__options-cta">
                     <svg  class="list__options-cta__svg" viewBox="0 0 6 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -96,7 +96,7 @@
                     </li>
                 </ul>
             </li>
-            <li tabindex="0" class="list">
+            <li tabindex="0" data-name="list_[Payments]"  class="list">
                 <span class="list__name">Payments</span>
                 <span class="list__options-cta">
                     <svg  class="list__options-cta__svg" viewBox="0 0 6 20" fill="none" xmlns="http://www.w3.org/2000/svg">

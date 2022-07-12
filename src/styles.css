@@ -83,13 +83,13 @@ body{
     transition: color 100ms ease-in;
 }
 
-.list:hover, .list:focus-visible, .list--options-visible {
+.list:hover:not(.list--new), .list:focus-visible:not(.list--new), .list--options-visible {
     outline: 0;
     border-top: 1px solid var(--grey-four);
     border-bottom: 1px solid var(--grey-four);
 }
 
-.list:hover .list__options-cta, .list:focus-visible .list__options-cta, 
+.list:hover:not(.list--new) .list__options-cta, .list:focus-visible:not(.list--new) .list__options-cta, 
 .list--options-visible .list__options-cta {
     opacity: 1;
 }
