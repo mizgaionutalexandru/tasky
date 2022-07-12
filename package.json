@@ -1,0 +1,23 @@
+{
+  "name": "tasky",
+  "version": "1.0.0",
+  "description": "a simple and intuitive todo app",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel ./src/index.html",
+    "build": "parcel build ./src/*.html --public-url ./ --dist-dir ./dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mizgaionutalexandru/tasky.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mizgaionutalexandru/tasky/issues"
+  },
+  "homepage": "https://github.com/mizgaionutalexandru/tasky#readme",
+  "dependencies": {
+    "parcel": "^2.6.2"
+  }
+}
