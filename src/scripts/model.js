@@ -21,7 +21,7 @@ export const saveList = (data) => {
 };
 
 /**
- * Change the currently active list
+ * Change the currently active list / the name of a list
  * @param {object} options
  */
 export const updateLists = (options) => {
@@ -29,6 +29,11 @@ export const updateLists = (options) => {
     // change the currently active list
     lists.forEach((list) => {
       list.active = list.id === options.id ? true : false;
+    });
+  } else if (options.oldName) {
+    // change the name of a specific list
+    lists.forEach((list) => {
+      list.name = list.id === options.id ? options.name : list.name;
     });
   }
 };

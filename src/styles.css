@@ -83,7 +83,7 @@ body{
     transition: color 100ms ease-in;
 }
 
-.list:hover:not(.list--new), .list:focus-visible:not(.list--new), .list--options-visible {
+.list:hover:not(.list--new):not(.list--modify), .list:focus-visible:not(.list--new):not(.list--modify), .list--options-visible {
     outline: 0;
     border-top: 1px solid var(--grey-four);
     border-bottom: 1px solid var(--grey-four);
@@ -94,7 +94,8 @@ body{
     opacity: 1;
 }
 
-.list--active .list__name{
+.list--active .list__name,
+.list--active .list__name__input{
     font-weight: bold;
     color: var(--primary-color);
 }

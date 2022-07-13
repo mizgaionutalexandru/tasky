@@ -51,7 +51,25 @@ class ListsView {
 
       // 4) CLICK on 'modify' list option
       if (e.target.closest("[data-action=modify]")) {
-        console.log("Modify!", this._listMenuOpen);
+        const listEngaged = e.target.closest(".list");
+        const oldName = listEngaged.querySelector(".list__name").innerHTML;
+        const markup = `
+          <span class="list__name">
+              <input class="list__name__input" type="text" value='${oldName}' data-old-name='${oldName}'>
+          </span>`;
+        listEngaged.innerHTML = markup;
+        listEngaged.classList.remove("list--options-visible");
+        listEngaged.classList.add("list--modify");
+        const listInput = listEngaged.querySelector(".list__name__input");
+        listInput.style.width = "0px";
+        listInput.style.width = listInput.scrollWidth + "px";
+        listInput.setSelectionRange(listInput.value.length, listInput.value.length);
+        listInput.focus();
+        // Make it stretch as it gets more content
+        listInput.addEventListener("input", () => {
+          listInput.style.width = "0px";
+          listInput.style.width = listInput.scrollWidth + "px";
+        });
       }
 
       // 5) CLICK on 'delete' list option
@@ -59,6 +77,10 @@ class ListsView {
         return handler("delete", { id: this._listMenuOpen });
       }
     });
+
+    ///////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////
 
     this._parentElement.addEventListener("keydown", (e) => {
       const activeEl = document.activeElement;
@@ -74,8 +96,11 @@ class ListsView {
         return handler("create");
       }
 
-      // 2) Enter key when the focused element is 'new list' input
-      if (activeEl.classList.contains("list__name__input")) {
+      // 2) Enter key / Escape when the focused element is 'new list' input
+      if (
+        activeEl.classList.contains("list__name__input") &&
+        activeEl.closest(".list").classList.contains(".list--new")
+      ) {
         if (e.key === "Enter") {
           // Save the list's name
           const listId = makeId(9);
@@ -93,17 +118,71 @@ class ListsView {
         }
       }
 
-      // 3) ACTION KEY when the focused element is 'modify' list option
-      if (e.target.closest("[data-action=modify]") && e.key === ACTION_KEY) {
-        console.log("Modify!", this._listMenuOpen);
+      // 3) Enter key / Escape when the focused element is 'modify list' input
+      if (
+        activeEl.classList.contains("list__name__input") &&
+        activeEl.closest(".list").classList.contains("list--modify")
+      ) {
+        const oldName = qs(".list__name__input").dataset.oldName;
+        const listEngaged = activeEl.closest(".list");
+        const listId = activeEl.closest(".list").dataset.id;
+        if (e.key === ACTION_KEY) {
+          // Modify the list's name
+          handler("save", {
+            status: "old",
+            oldName,
+            name: qs(".list__name__input").value,
+            id: listId,
+          });
+          qs(`[data-id='${listId}']`).focus();
+        } else if (e.key === "Escape") {
+          // Cancel the list modify
+          const markup = `
+          <span class="list__name">${oldName}</span>
+              <span class="list__options-cta">
+              <svg  class="list__options-cta__svg" viewBox="0 0 6 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="2.74725" cy="2.74725" r="2.74725" fill="black" fill-opacity="0.6"/>
+                  <circle cx="2.74725" cy="10" r="2.74725" fill="black" fill-opacity="0.6"/>
+                  <circle cx="2.74725" cy="17.2527" r="2.74725" fill="black" fill-opacity="0.6"/>
+              </svg>
+          </span>`;
+          listEngaged.innerHTML = markup;
+          listEngaged.classList.remove("list--modify");
+          listEngaged.focus();
+        }
+        return;
       }
 
-      // 4) ACTION KEY when the focused element is 'delete' list option
-      if (e.target.closest("[data-action=delete") && e.key === ACTION_KEY) {
+      // 4) ACTION KEY when the focused element is 'modify' list option
+      if (activeEl.dataset.action === "modify" && e.key === ACTION_KEY) {
+        const listEngaged = activeEl.closest(".list");
+        const oldName = listEngaged.querySelector(".list__name").innerText;
+        const markup = `
+            <span class="list__name">
+                <input class="list__name__input" type="text" value='${oldName}'  data-old-name='${oldName}'>
+            </span>`;
+        listEngaged.innerHTML = markup;
+        listEngaged.classList.remove("list--options-visible");
+        listEngaged.classList.add("list--modify");
+        const listInput = listEngaged.querySelector(".list__name__input");
+        listInput.style.width = "0px";
+        listInput.style.width = listInput.scrollWidth + "px";
+        listInput.setSelectionRange(listInput.value.length, listInput.value.length);
+        listInput.focus();
+
+        // Make it stretch as it gets more content
+        listInput.addEventListener("input", () => {
+          listInput.style.width = "0px";
+          listInput.style.width = listInput.scrollWidth + "px";
+        });
+      }
+
+      // 5) ACTION KEY when the focused element is 'delete' list option
+      if (activeEl.dataset.action === "delete" && e.key === ACTION_KEY) {
         return handler("delete", { id: this._listMenuOpen });
       }
 
-      // 5) ACTION KEY when the focused element is a list
+      // 6) ACTION KEY when the focused element is a list
       const listEngaged = activeEl.closest(".list:not(.list--new)");
       if (listEngaged && e.key === ACTION_KEY) {
         const listId = listEngaged.dataset.id;
@@ -116,13 +195,14 @@ class ListsView {
         return qs(`[data-id=${listId}]`).focus();
       }
 
-      // 6) OPTIONS KEY when the focused element is a list
+      // 7) OPTIONS KEY when the focused element is a list
       if (listEngaged && e.key === OPTIONS_KEY) {
         const optionsMarkup = this._getOptionsMarkup();
         if (listEngaged.classList.contains("list--options-visible")) {
           listEngaged.classList.remove("list--options-visible");
           qs(".list__options").remove();
           this._listMenuOpen = null;
+          listEngaged.focus();
         } else {
           qs(".list--options-visible")?.classList.remove("list--options-visible");
           qs(".list__options")?.remove();
