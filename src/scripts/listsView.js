@@ -5,77 +5,55 @@ class ListsView {
   _parentElement = qs(".nav-container");
   _listsContainer = qs(".lists");
   _isNewListInputOpen = false;
-  _listMenuOpen;
+  _currentlyModifiedListId = null;
+  _listOptionsOpen;
   _data;
 
   addHandlerClick(handler) {
     this._parentElement.addEventListener("click", (e) => {
-      // 1) CLICK on 'create new list' button
-      if (e.target.closest(".list-add")) {
-        if (this._isNewListInputOpen)
-          // Save the previous new list input as a new list
-          handler("save", {
-            status: "new",
-            name: qs(".list__name__input").value,
-          });
-        // Create a new one
-        return handler("create");
-      }
+      /////////////////////
+      // I) Click on a list
+      /////////////////////
+      const listClicked = e.target.closest(".list");
 
-      // 2) CLICK on a list name
-      const listNamePressed = e.target.closest(".list__name");
-      if (listNamePressed && !listNamePressed.closest(".list--new"))
-        return handler("save", {
-          status: "old",
-          id: listNamePressed.closest(".list").dataset.id, // needed to indentify the list
-          active: true,
-        });
+      if (listClicked) {
+        const listId = listClicked.dataset.id;
 
-      // 3) CLICK on three dot option menu
-      if (e.target.closest(".list__options-cta")) {
-        const listEngaged = e.target.closest(".list");
-        const optionsMarkup = this._getOptionsMarkup();
-        if (listEngaged.classList.contains("list--options-visible")) {
-          listEngaged.classList.remove("list--options-visible");
-          qs(".list__options").remove();
-          this._listMenuOpen = null;
-        } else {
-          qs(".list--options-visible")?.classList.remove("list--options-visible");
-          qs(".list__options")?.remove();
-          listEngaged.classList.add("list--options-visible");
-          listEngaged.insertAdjacentHTML("beforeend", optionsMarkup);
-          this._listMenuOpen = listEngaged.dataset.id;
+        // 1) Click on the list's name
+        // Change the currently active list to this one
+        const listNamePressed = e.target.closest(".list__name");
+        // If it is not one being created at the moment or being modified
+        if (listNamePressed)
+          if (listClicked.querySelector(".list__name__input")) return;
+          // if it is one being created/edited at the moment, ignore the click
+          else return this._changeActiveList(handler, listId);
+
+        // 2) Click on option menu icon
+        if (e.target.closest(".list__options-cta"))
+          return this._displayListOptions(listClicked, listId);
+
+        // 3) Click on 'modify' list option
+        if (e.target.closest("[data-action=modify]"))
+          return this._modifyList(listClicked);
+
+        // 5) Click on 'delete' list option
+        if (e.target.closest("[data-action=delete")) {
+          return handler("delete", { id: this._listOptionsOpen });
         }
-        return;
       }
 
-      // 4) CLICK on 'modify' list option
-      if (e.target.closest("[data-action=modify]")) {
-        const listEngaged = e.target.closest(".list");
-        const oldName = listEngaged.querySelector(".list__name").innerHTML;
-        const markup = `
-          <span class="list__name">
-              <input class="list__name__input" type="text" value='${oldName}' data-old-name='${oldName}'>
-          </span>`;
-        listEngaged.innerHTML = markup;
-        listEngaged.classList.remove("list--options-visible");
-        listEngaged.classList.add("list--modify");
-        const listInput = listEngaged.querySelector(".list__name__input");
-        listInput.style.width = "0px";
-        listInput.style.width = listInput.scrollWidth + "px";
-        listInput.setSelectionRange(listInput.value.length, listInput.value.length);
-        listInput.focus();
-        // Make it stretch as it gets more content
-        listInput.addEventListener("input", () => {
-          listInput.style.width = "0px";
-          listInput.style.width = listInput.scrollWidth + "px";
-        });
-      }
+      ///////////////////////////////////
+      // II) Click on the add list button
+      ///////////////////////////////////
+      if (e.target.closest(".list-add")) return this._addNewList(handler);
 
-      // 5) CLICK on 'delete' list option
-      if (e.target.closest("[data-action=delete")) {
-        return handler("delete", { id: this._listMenuOpen });
-      }
+      /////////////////////////////////////////////////
+      // III) Click anywhere else on the nav-container
+      /////////////////////////////////////////////////
+      this._saveInputAsNewList(handler);
+      // Save the list that is being modified if it exists
+      this._saveModifiedList(handler);
+      this._closeOptionsMenu();
     });
 
     ///////////////////////////////////////////////////////
@@ -84,135 +62,224 @@ class ListsView {
 
     this._parentElement.addEventListener("keydown", (e) => {
       const activeEl = document.activeElement;
-      // 1) ACTION KEY when the focused element is 'create new list' button
-      if (activeEl.closest(".list-add") && e.key === ACTION_KEY) {
-        if (this._isNewListInputOpen)
-          // Save the previous new list input as a new list
-          handler("save", {
-            status: "new",
-            name: qs(".list__name__input").value,
-          });
-        // Create a new one
-        return handler("create");
-      }
+      ////////////////////////////////////////////////
+      // I) The active element is the add list button
+      ////////////////////////////////////////////////
+      if (activeEl.closest(".list-add") && e.key === ACTION_KEY)
+        return this._addNewList(handler);
 
-      // 2) Enter key / Escape when the focused element is 'new list' input
+      ////////////////////////////////////////////////
+      // II) The active element is the new list input
+      ////////////////////////////////////////////////
+      const listEngaged = activeEl.closest(".list");
+      const listId = listEngaged.dataset.id;
+
       if (
         activeEl.classList.contains("list__name__input") &&
-        activeEl.closest(".list").classList.contains(".list--new")
+        listEngaged.classList.contains("list--new")
       ) {
-        if (e.key === "Enter") {
-          // Save the list's name
-          const listId = makeId(9);
-          this._isNewListInputOpen = false;
-          handler("save", {
-            status: "new",
-            name: qs(".list__name__input").value,
-            id: listId,
-          });
-          return qs(`[data-id=${listId}]`).focus();
-        } else if (e.key === "Escape") {
-          // Cancel the new list
-          this._isNewListInputOpen = false;
-          return qs(".list--new")?.remove();
-        }
+        if (e.key === ACTION_KEY) return this._saveInputAsNewList(handler);
+        else if (e.key === OPTIONS_KEY) return this._closeAndCancelNewList();
       }
 
-      // 3) Enter key / Escape when the focused element is 'modify list' input
+      ///////////////////////////////////////////////////
+      // III) The active element is the modify list input
+      ///////////////////////////////////////////////////
       if (
         activeEl.classList.contains("list__name__input") &&
-        activeEl.closest(".list").classList.contains("list--modify")
+        listEngaged.classList.contains("list--modify")
       ) {
-        const oldName = qs(".list__name__input").dataset.oldName;
-        const listEngaged = activeEl.closest(".list");
-        const listId = activeEl.closest(".list").dataset.id;
-        if (e.key === ACTION_KEY) {
-          // Modify the list's name
-          handler("save", {
-            status: "old",
-            oldName,
-            name: qs(".list__name__input").value,
-            id: listId,
-          });
+        if (e.key === ACTION_KEY) return this._saveModifiedList(handler);
+        else if (e.key === OPTIONS_KEY) return this._closeAndCancelModifyList();
+      }
+
+      ///////////////////////////////////////////////////
+      // IV) The active element is the modify list option
+      ///////////////////////////////////////////////////
+      if (activeEl.dataset.action === "modify") {
+        if (e.key === ACTION_KEY) return this._modifyList(listEngaged);
+        else if (e.key === OPTIONS_KEY) {
+          this._closeOptionsMenu();
           qs(`[data-id='${listId}']`).focus();
-        } else if (e.key === "Escape") {
-          // Cancel the list modify
-          const markup = `
-          <span class="list__name">${oldName}</span>
-              <span class="list__options-cta">
-              <svg  class="list__options-cta__svg" viewBox="0 0 6 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="2.74725" cy="2.74725" r="2.74725" fill="black" fill-opacity="0.6"/>
-                  <circle cx="2.74725" cy="10" r="2.74725" fill="black" fill-opacity="0.6"/>
-                  <circle cx="2.74725" cy="17.2527" r="2.74725" fill="black" fill-opacity="0.6"/>
-              </svg>
-          </span>`;
-          listEngaged.innerHTML = markup;
-          listEngaged.classList.remove("list--modify");
-          listEngaged.focus();
+          return;
         }
-        return;
       }
 
-      // 4) ACTION KEY when the focused element is 'modify' list option
-      if (activeEl.dataset.action === "modify" && e.key === ACTION_KEY) {
-        const listEngaged = activeEl.closest(".list");
-        const oldName = listEngaged.querySelector(".list__name").innerText;
-        const markup = `
-            <span class="list__name">
-                <input class="list__name__input" type="text" value='${oldName}'  data-old-name='${oldName}'>
-            </span>`;
-        listEngaged.innerHTML = markup;
-        listEngaged.classList.remove("list--options-visible");
-        listEngaged.classList.add("list--modify");
-        const listInput = listEngaged.querySelector(".list__name__input");
-        listInput.style.width = "0px";
-        listInput.style.width = listInput.scrollWidth + "px";
-        listInput.setSelectionRange(listInput.value.length, listInput.value.length);
-        listInput.focus();
-
-        // Make it stretch as it gets more content
-        listInput.addEventListener("input", () => {
-          listInput.style.width = "0px";
-          listInput.style.width = listInput.scrollWidth + "px";
-        });
-      }
-
-      // 5) ACTION KEY when the focused element is 'delete' list option
-      if (activeEl.dataset.action === "delete" && e.key === ACTION_KEY) {
-        return handler("delete", { id: this._listMenuOpen });
-      }
-
-      // 6) ACTION KEY when the focused element is a list
-      const listEngaged = activeEl.closest(".list:not(.list--new)");
-      if (listEngaged && e.key === ACTION_KEY) {
-        const listId = listEngaged.dataset.id;
-        handler("save", {
-          status: "old",
-          id: listId, // needed to indentify the list
-          active: true,
-        });
-        // Focus the newly active list
-        return qs(`[data-id=${listId}]`).focus();
-      }
-
-      // 7) OPTIONS KEY when the focused element is a list
-      if (listEngaged && e.key === OPTIONS_KEY) {
-        const optionsMarkup = this._getOptionsMarkup();
-        if (listEngaged.classList.contains("list--options-visible")) {
-          listEngaged.classList.remove("list--options-visible");
-          qs(".list__options").remove();
-          this._listMenuOpen = null;
-          listEngaged.focus();
-        } else {
-          qs(".list--options-visible")?.classList.remove("list--options-visible");
-          qs(".list__options")?.remove();
-          listEngaged.classList.add("list--options-visible");
-          listEngaged.insertAdjacentHTML("beforeend", optionsMarkup);
-          this._listMenuOpen = listEngaged.dataset.id;
+      ///////////////////////////////////////////////////
+      // V) The active element is the delete list option
+      ///////////////////////////////////////////////////
+      if (activeEl.dataset.action === "delete") {
+        if (e.key === ACTION_KEY) return handler("delete", { id: this._listOptionsOpen });
+        else if (e.key === OPTIONS_KEY) {
+          this._closeOptionsMenu();
+          qs(`[data-id='${listId}']`).focus();
+          return;
         }
-        return;
+      }
+
+      ///////////////////////////////////////////////////
+      // VI) The active element is a list
+      ///////////////////////////////////////////////////
+      if (listEngaged) {
+        if (e.key === ACTION_KEY) return this._changeActiveList(handler, listId);
+        else if (e.key === OPTIONS_KEY)
+          return this._displayListOptions(listEngaged, listId);
       }
     });
+  }
+
+  /**
+   * Creates a new list on the DOM.
+   * @param {function} handler
+   */
+  _addNewList(handler) {
+    this._closeOptionsMenu();
+    this._saveModifiedList(handler);
+    this._saveInputAsNewList(handler);
+    // Create a new list (list--new) with a input
+    return handler("create");
+  }
+
+  /**
+   * Makes the given list editable.
+   * @param {object} list
+   */
+  _modifyList(list) {
+    const oldName = list.querySelector(".list__name").innerText;
+    const markup = `
+        <span class="list__name">
+            <input class="list__name__input" type="text" value='${oldName}'  data-old-name='${oldName}'>
+        </span>`;
+    list.innerHTML = markup;
+    list.classList.remove("list--options-visible");
+    list.classList.add("list--modify");
+    const listInput = list.querySelector(".list__name__input");
+    listInput.style.width = "0px";
+    listInput.style.width = listInput.scrollWidth + "px";
+    listInput.setSelectionRange(listInput.value.length, listInput.value.length);
+    listInput.focus();
+
+    // Make it stretch as it gets more content
+    listInput.addEventListener("input", () => {
+      listInput.style.width = "0px";
+      listInput.style.width = listInput.scrollWidth + "px";
+    });
+
+    this._currentlyModifiedListId = list.dataset.id;
+  }
+
+  _displayListOptions(list, listId) {
+    const optionsMarkup = this._getOptionsMarkup();
+    this._closeAndCancelNewList();
+    this._closeAndCancelModifyList();
+    if (list.classList.contains("list--options-visible")) {
+      // If the clicked list has the options opened, close them
+      list.classList.remove("list--options-visible");
+      qs(".list__options").remove();
+      // Reset the list's id for which the options are opened
+      this._listOptionsOpen = null;
+    } else {
+      // If there are some options open, close them
+      this._closeOptionsMenu();
+      // Open the options for the clicked list
+      list.classList.add("list--options-visible");
+      list.insertAdjacentHTML("beforeend", optionsMarkup);
+      // Save the list's id for which the options are opened
+      this._listOptionsOpen = listId;
+    }
+  }
+
+  /**
+   * Changes the currently active list and focuses it.
+   * @param {function} handler
+   * @param {string} listId
+   */
+  _changeActiveList(handler, listId) {
+    this._closeOptionsMenu();
+    this._closeAndCancelNewList();
+    this._closeAndCancelModifyList();
+    handler("save", {
+      status: "old",
+      id: listId,
+      active: true,
+    });
+    // Focus the newly active list
+    return qs(`[data-id=${listId}]`).focus();
+  }
+
+  /**
+   * Save the list that is being created if it exists.
+   * Sets _isNewListInputOpen to false.
+   * @param {function} handler
+   */
+  _saveInputAsNewList(handler) {
+    if (!this._isNewListInputOpen) return;
+    this._isNewListInputOpen = false;
+    const id = makeId(9);
+    handler("save", {
+      status: "new",
+      name: qs(".list__name__input").value,
+      id,
+    });
+    qs(`[data-id='${id}'`).focus();
+  }
+
+  /**
+   * Save the list that is being modified if it exists.
+   * Sets _currentlyModifiedListId to null.
+   * @param {function} handler
+   */
+  _saveModifiedList(handler) {
+    if (!this._currentlyModifiedListId) return;
+    handler("save", {
+      status: "old",
+      oldName: qs(".list__name__input").dataset.oldName,
+      name: qs(".list__name__input").value,
+      id: this._currentlyModifiedListId,
+    });
+    qs(`[data-id='${this._currentlyModifiedListId}']`).focus();
+    this._currentlyModifiedListId = null;
+  }
+
+  /**
+   * Removes the options from the DOM and the list's 'list--options-visible' class
+   */
+  _closeOptionsMenu() {
+    qs(".list--options-visible")?.classList.remove("list--options-visible");
+    qs(".list__options")?.remove();
+  }
+
+  /**
+   * Removes the new list input from the DOM and sets _isNewListInputOpen to false.
+   * It CANCELS the creation of a new list!
+   */
+  _closeAndCancelNewList() {
+    this._isNewListInputOpen = false;
+    qs(".list--new")?.remove();
+  }
+
+  /**
+   * Replaces the modify list input with a list on the DOM with the data previous to
+   * the modify option. It CANCELS any modification made. Removes the 'list--modify' class.
+   */
+  _closeAndCancelModifyList() {
+    const list = qs(".list--modify");
+    if (!list) return;
+    const markup = `
+              <span class="list__name">${
+                list.querySelector(".list__name__input").dataset.oldName
+              }</span>
+                  <span class="list__options-cta">
+                  <svg  class="list__options-cta__svg" viewBox="0 0 6 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="2.74725" cy="2.74725" r="2.74725" fill="black" fill-opacity="0.6"/>
+                      <circle cx="2.74725" cy="10" r="2.74725" fill="black" fill-opacity="0.6"/>
+                      <circle cx="2.74725" cy="17.2527" r="2.74725" fill="black" fill-opacity="0.6"/>
+                  </svg>
+              </span>`;
+    list.innerHTML = markup;
+    list.classList.remove("list--modify");
+    list.focus();
+    this._currentlyModifiedListId = null;
   }
 
   /**
@@ -271,6 +338,9 @@ class ListsView {
     </li>`;
   }
 
+  /**
+   * Creates and returns the markup of the options menu to be rendered
+   */
   _getOptionsMarkup() {
     return `
     <ul class="list__options">
