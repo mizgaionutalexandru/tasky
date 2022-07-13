@@ -7,7 +7,7 @@ class List {
   }
 }
 
-export const lists = JSON.parse(localStorage.getItem("tasky-lists")) || [];
+export let lists = JSON.parse(localStorage.getItem("tasky-lists")) || [];
 console.log(lists);
 
 /**
@@ -31,6 +31,12 @@ export const updateLists = (options) => {
       list.active = list.id === options.id ? true : false;
     });
   }
+};
+
+export const deleteList = (id) => {
+  lists = lists.filter((list) => list.id != id);
+  // If the users deletes the currently active list, make the first one the active one
+  if (!lists.some((list) => list.active === true)) lists[0].active = true;
 };
 
 export const upload = () => {

@@ -16,9 +16,12 @@ const listsController = (action, options) => {
     model.updateLists(options);
     listsView.update(model.lists);
     model.upload();
-  }
-  if (action === "create") {
+  } else if (action === "create") {
     listsView.renderNewList();
+  } else if (action === "delete") {
+    model.deleteList(options.id);
+    listsView.update(model.lists);
+    model.upload();
   }
 };
 

@@ -46,6 +46,17 @@ class ListsView {
           listEngaged.insertAdjacentHTML("beforeend", optionsMarkup);
           this._listMenuOpen = listEngaged.dataset.id;
         }
+        return;
+      }
+
+      // 4) CLICK on 'modify' list option
+      if (e.target.closest("[data-action=modify]")) {
+        console.log("Modify!", this._listMenuOpen);
+      }
+
+      // 5) CLICK on 'delete' list option
+      if (e.target.closest("[data-action=delete")) {
+        return handler("delete", { id: this._listMenuOpen });
       }
     });
 
@@ -82,7 +93,17 @@ class ListsView {
         }
       }
 
-      // 3) ACTION KEY when the focused element is a list
+      // 3) ACTION KEY when the focused element is 'modify' list option
+      if (e.target.closest("[data-action=modify]") && e.key === ACTION_KEY) {
+        console.log("Modify!", this._listMenuOpen);
+      }
+
+      // 4) ACTION KEY when the focused element is 'delete' list option
+      if (e.target.closest("[data-action=delete") && e.key === ACTION_KEY) {
+        return handler("delete", { id: this._listMenuOpen });
+      }
+
+      // 5) ACTION KEY when the focused element is a list
       const listEngaged = activeEl.closest(".list:not(.list--new)");
       if (listEngaged && e.key === ACTION_KEY) {
         const listId = listEngaged.dataset.id;
@@ -95,7 +116,7 @@ class ListsView {
         return qs(`[data-id=${listId}]`).focus();
       }
 
-      // 4) OPTIONS KEY when the focused element is a list
+      // 6) OPTIONS KEY when the focused element is a list
       if (listEngaged && e.key === OPTIONS_KEY) {
         const optionsMarkup = this._getOptionsMarkup();
         if (listEngaged.classList.contains("list--options-visible")) {
@@ -109,6 +130,7 @@ class ListsView {
           listEngaged.insertAdjacentHTML("beforeend", optionsMarkup);
           this._listMenuOpen = listEngaged.dataset.id;
         }
+        return;
       }
     });
   }
