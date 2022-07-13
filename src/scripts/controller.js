@@ -5,7 +5,7 @@ import * as model from "./model.js";
 /**
  * The controller for lists
  * @param {string} action - save / create / delete
- * @param {object} [options] - status: new / old, name, id
+ * @param {object} [options] - status: new / old, name, id, active
  */
 const listsController = (action, options) => {
   if (action === "save" && options.status === "new") {
