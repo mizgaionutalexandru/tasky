@@ -103,10 +103,6 @@ body{
     display: flex;
 }
 
-.list--options-visible .list__options{
-    display: block;
-}
-
 .list__name {
     font-size: 2.4rem;
     color: var(--grey-one);
@@ -159,7 +155,7 @@ body{
 }
 
 .list__options {
-    display: none;
+    display: block;
     list-style-type: none;
     position: absolute;
     top:100%;
@@ -168,7 +164,25 @@ body{
     width: 100%;
     border: 1px solid var(--grey-three);
     font-size: 2rem;
+    animation-name: slide;
+    animation-duration: 150ms;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    transform-origin: top;
 }
+
+@keyframes slide {
+    from{
+        opacity: 0;
+        transform: scaleY(0);
+    }
+
+    to{
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
 
 .list__option {
     display: flex;
@@ -178,6 +192,7 @@ body{
     padding: 0.4rem 1.2rem 0.4rem 1.2rem;
     transition: background-color 100ms ease-in;
     cursor: pointer;
+    outline: 0;
 }
 
 .list__option__icon--modify{
@@ -195,7 +210,8 @@ body{
     border-bottom: 1px solid var(--grey-three);
 }
 
-.list__option:hover{
+.list__option:hover,
+.list__option:focus-visible{
     background-color: var(--grey-four);
 }
 
