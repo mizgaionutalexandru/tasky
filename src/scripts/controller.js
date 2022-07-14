@@ -1,5 +1,6 @@
 import "core-js/stable";
-import listsView from "./listsView";
+import listsView from "./views/listsView";
+import navbarView from "./views/navbarView";
 import * as model from "./model.js";
 
 /**
@@ -28,6 +29,7 @@ const listsController = (action, options) => {
 const init = () => {
   listsView.update(model.lists);
   listsView.addHandlerClick(listsController);
+  navbarView.addNavbarMobileListener(listsController);
 };
 
 init();

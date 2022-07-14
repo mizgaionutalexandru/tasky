@@ -1,5 +1,5 @@
-import { makeId, qs } from "./helpers.js";
-import { ACTION_KEY, OPTIONS_KEY } from "./config.js";
+import { makeId, qs } from "../helpers.js";
+import { ACTION_KEY, OPTIONS_KEY } from "../config.js";
 
 class ListsView {
   _parentElement = qs(".nav-container");
