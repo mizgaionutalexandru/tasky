@@ -474,8 +474,12 @@ body{
         position: relative;
     }
 
+    .lists {
+        padding-left: 2.1rem;
+    }
+
     .nav-container--shown-mobile{
-        width: 76%;
+        width: 60%;
         height: 100%;
         position: absolute;
         z-index: 3;
@@ -503,7 +507,7 @@ body{
         }
     }
 
-    .nav-container--hidden{
+    .nav-container--hidden-mobile{
         opacity: 0;
         width: 0;
     }
@@ -542,7 +546,7 @@ body{
         width: 4.8rem;
         border-radius: 50%;
         position: absolute;
-        z-index: 2;
+        z-index: 4;
     }
 
     .nav-toggle:focus::before,

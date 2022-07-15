@@ -51,7 +51,7 @@ class NavbarView {
   _openList() {
     qs(".list-add--mobile").classList.toggle("hidden");
     qs(".content-container").classList.toggle("content-container--navbar-shown");
-    this._navContainer.classList.toggle("nav-container--hidden");
+    this._navContainer.classList.toggle("nav-container--hidden-mobile");
     this._navContainer.classList.toggle("nav-container--shown-mobile");
     this._parentElement.classList.toggle("mobile-aside--lists-visible");
   }
