@@ -72,7 +72,7 @@ class ListsView {
       // II) The active element is the new list input
       ////////////////////////////////////////////////
       const listEngaged = activeEl.closest(".list");
-      const listId = listEngaged.dataset.id;
+      const listId = listEngaged?.dataset.id;
 
       if (
         activeEl.classList.contains("list__name__input") &&
