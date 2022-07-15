@@ -47,6 +47,8 @@ body{
     height: 100%;
 }
 
+
+
 /* ===================== */
 /* NAV CONTAINER STYLING */
 /* ===================== */
@@ -64,6 +66,11 @@ body{
     cursor: pointer;
 }
 
+.list-add__svg{
+    width: 3.6rem;
+    height: 3.6rem;
+}
+
 .list-add--mobile{
     display: none;
 }
@@ -74,6 +81,34 @@ body{
 .list-add--mobile:focus-visible{
     outline: 2px solid var(--grey-four);
     transform: scale(1.1);
+}
+
+.list-add:focus-visible::before,
+.item-add:focus-visible::before,
+.list-add--mobile:focus-visible::before {
+    content: "";
+    background: url('./assets/arrow.svg');
+    background-position: center;
+    background-size: contain;
+    width: 3.6rem;
+    height: 3.6rem;
+    right: 3.6rem;
+    bottom: 0.16rem;
+    position: absolute;
+    animation: right-left 1s ;
+    animation-iteration-count: infinite;
+}
+
+.item-add:focus-visible::before{
+    left: -3.6rem;
+}
+
+.list-add--mobile:focus-visible::before{
+    bottom: 0.36rem;
+}
+
+.list-add--mobile:focus-visible{
+    transform: rotate(90deg);
 }
 
 .lists {
@@ -259,6 +294,7 @@ body{
     transition: all 100ms ease-in;
     font-family: 'Lato', sans-serif;
     cursor: pointer;
+    position: relative;
 }
 
 .item-add:hover,.item-add:focus-visible{
@@ -294,7 +330,7 @@ body{
 }
 
 .item:hover, .item--options-visible,
-.item:focus {
+.item:focus-visible {
     border-top: 1px solid var(--grey-four);
     border-bottom: 1px solid var(--grey-four);
 }
@@ -321,7 +357,7 @@ body{
     cursor: pointer;
 }
 
-.item:focus .item__label::after{
+.item:focus-visible .item__label::after{
     content: "";
     background: url('./assets/arrow.svg');
     background-position: center;
@@ -330,10 +366,12 @@ body{
     height: 3.2rem;
     position: absolute;
     left: calc(-2 * var(--width) - var(--gap));
-    top:0;
+    top:-0.2rem;
     animation: right-left 1s ;
     animation-iteration-count: infinite;
 }
+
+
 
 @keyframes right-left {
     from{
@@ -371,7 +409,7 @@ body{
 }
 
 .item:hover .item__options-cta, 
-.item:focus .item__options-cta,
+.item:focus-visible .item__options-cta,
 .item--options-visible .item__options-cta{
     opacity: 1;
 }
@@ -549,7 +587,7 @@ body{
         z-index: 4;
     }
 
-    .nav-toggle:focus::before,
+    .nav-toggle:focus-visible::before,
     .nav-toggle:hover::before{
         background-color: var(--grey-three);
         opacity: 0.45;
