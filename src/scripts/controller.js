@@ -17,7 +17,7 @@ const listsController = (action, options) => {
     model.upload();
   } else if (action === "save" && options.status === "old") {
     model.updateLists(options);
-    if (options.active) itemsView.update(model.getCurrentlyActiveList());
+    if (options.modify === "active") itemsView.update(model.getCurrentlyActiveList());
     listsView.update(model.lists);
     model.upload();
   } else if (action === "create") {

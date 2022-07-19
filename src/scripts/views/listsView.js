@@ -200,7 +200,7 @@ class ListsView {
     handler("save", {
       status: "old",
       id: listId,
-      active: true,
+      modify: "active",
     });
     // Focus the newly active list
     return qs(`[data-id=${listId}]`).focus();
@@ -232,9 +232,9 @@ class ListsView {
     if (!this._currentlyModifiedListId) return;
     handler("save", {
       status: "old",
-      oldName: qs(".list__name__input").dataset.oldName,
       name: qs(".list__name__input").value,
       id: this._currentlyModifiedListId,
+      modify: "name",
     });
     qs(`[data-id='${this._currentlyModifiedListId}']`).focus();
     this._currentlyModifiedListId = null;

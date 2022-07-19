@@ -43,15 +43,15 @@ export const saveItem = (data) => {
 
 /**
  * Change the currently active list / the name of a list
- * @param {object} options
+ * @param {object} options - id, modify = [active, name]
  */
 export const updateLists = (options) => {
-  if (options.active) {
+  if (options.modify === "active") {
     // change the currently active list
     lists.forEach((list) => {
       list.active = list.id === options.id ? true : false;
     });
-  } else if (options.oldName) {
+  } else if (options.modify === "name") {
     // change the name of a specific list
     lists.forEach((list) => {
       list.name = list.id === options.id ? options.name : list.name;
@@ -61,7 +61,7 @@ export const updateLists = (options) => {
 
 /**
  * Change the name of an item/ toggle its completed property
- * @param {object} options
+ * @param {object} options - id, modify = [completed, text]
  */
 export const updateItems = (options) => {
   if (options.modify === "completed") {
@@ -69,7 +69,7 @@ export const updateItems = (options) => {
     getCurrentlyActiveList().items.forEach((item) => {
       item.completed = item.id === options.id ? options.completed : item.completed;
     });
-  } else if (options.oldText) {
+  } else if (options.modify === "text") {
     // change the text of an item
     getCurrentlyActiveList().items.forEach((item) => {
       if (item.id === options.id) item.text = options.text;

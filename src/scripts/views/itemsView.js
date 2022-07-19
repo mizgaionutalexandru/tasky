@@ -226,9 +226,9 @@ class ItemsView {
     console.log(qs(".item__text__input").dataset.oldText);
     handler("save", {
       status: "old",
-      oldText: qs(".item__text__input").dataset.oldText,
       text: qs(".item__text__input").value,
       id: this._currentlyModifiedItemId,
+      modify: "text",
     });
     qs(`[data-id='${this._currentlyModifiedItemId}']`).focus();
     this._currentlyModifiedItemId = null;
