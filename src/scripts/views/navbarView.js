@@ -28,7 +28,7 @@ class NavbarView {
       // II) Click on the add list button
       ///////////////////////////////////
       if (e.target.closest(".list-add--mobile")) {
-        this._openList();
+        this._toggleList();
         handler("create");
       }
     });
