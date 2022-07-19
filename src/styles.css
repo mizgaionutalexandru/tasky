@@ -37,7 +37,7 @@ body{
 }
 
 .nav-container{
-    width: 27%;
+    width: max(27%, 26rem);
     border-right: 1px solid var(--grey-three);
     position: relative;
 }
@@ -349,8 +349,8 @@ body{
     background: url('./assets/checkbox-empty.svg');
     background-position: center;
     background-size: contain;
-    width: 3rem;
-    height: 3rem;
+    width: var(--width);
+    height: var(--width);
     position: absolute;
     left: calc( -1 * var(--width) - var(--gap));
 }
@@ -448,10 +448,10 @@ body{
     background: url('./assets/checkbox-filled.svg');
     background-position: center;
     background-size: contain;
-    width: 3rem;
-    height: 3rem;
+    width: var(--width);
+    height: var(--width);
     position: absolute;
-    left: calc(-3.2rem - 2rem);
+    left:  calc( -1 * var(--width) - var(--gap));
     cursor: pointer;
 }
 
@@ -468,7 +468,7 @@ body{
     right: 0;
     background-color: white;
     z-index: 9;
-    width: 20%;
+    width: max(20%, 12rem);
     border: 1px solid var(--grey-three);
     font-size: 2rem;
 
@@ -515,6 +515,7 @@ body{
     html{
         font-size: 60%;
     }
+
   }
 
 @media (max-width: 900px){
@@ -527,7 +528,7 @@ body{
     }
 
     .nav-container--shown-mobile{
-        width: 60%;
+        width: 40%;
         height: 100%;
         position: absolute;
         z-index: 3;
@@ -636,8 +637,20 @@ body{
 
 @media (max-width: 660px){
 
+    .content-header{
+        padding-bottom: 1.2rem;
+    }
+
     .active-list-title{
         font-size: 3rem;
+    }
+
+    .item-add{
+        font-size: 1.8rem;
+    }
+
+    .mobile-aside{
+        padding-top: 3.2rem;
     }
 
     .nav-container--shown-mobile{
@@ -646,5 +659,35 @@ body{
 
     .content-container--navbar-shown{
         margin-left: 5.7rem;
+    }
+}
+
+@media (max-width: 480px){
+    html{
+        font-size: 50%;
+    }
+
+    .item{
+        padding: 0;
+    }
+}
+
+@media(max-width: 380px){
+    .active-list-title{
+        font-size: 2.2rem;
+    }
+
+    .item,
+    .item__option__name,
+    .item__text__input {
+        font-size: 2rem;
+    }
+
+    .item__info{
+        --width: 2.4rem;
+    }
+
+    .item:focus-visible .item__text:after{
+        top: -0.4rem;
     }
 }
