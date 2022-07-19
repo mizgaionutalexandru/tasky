@@ -9,7 +9,7 @@ class ListsView {
   _listOptionsOpen;
   _data;
 
-  addHandlerClick(handler) {
+  addHandler(handler) {
     this._parentElement.addEventListener("click", (e) => {
       /////////////////////
       // I) Click on a list
@@ -22,7 +22,6 @@ class ListsView {
         // 1) Click on the list's name
         // Change the currently active list to this one
         const listNamePressed = e.target.closest(".list__name");
-        // If it is not one being created at the moment or being modified
         if (listNamePressed)
           if (listClicked.querySelector(".list__name__input")) return;
           // if it is one being created/edited at the moment, ignore the click
@@ -136,7 +135,7 @@ class ListsView {
     this._closeOptionsMenu();
     this._saveModifiedList(handler);
     this._saveInputAsNewList(handler);
-    // Create a new list (list--new) with a input
+    // Create a new list (list--new) with an input
     return handler("create");
   }
 

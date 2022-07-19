@@ -6,7 +6,7 @@ class NavbarView {
   _navContainer = qs(".nav-container");
   _areListsShown = window.innerWidth <= MOBILE_THRESHOLD ? false : true;
 
-  addNavbarMobileListener(handler) {
+  addNavbarMobileHandler(handler) {
     this._parentElement.addEventListener("click", (e) => {
       ////////////////////////////////
       // I) Click on the burger menu

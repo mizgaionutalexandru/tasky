@@ -1,5 +1,6 @@
 import "core-js/stable";
 import listsView from "./views/listsView";
+import itemsView from "./views/itemsView";
 import navbarView from "./views/navbarView";
 import * as model from "./model.js";
 
@@ -12,9 +13,11 @@ const listsController = (action, options) => {
   if (action === "save" && options.status === "new") {
     model.saveList(options);
     listsView.update(model.lists);
+    itemsView.update(model.getCurrentlyActiveList());
     model.upload();
   } else if (action === "save" && options.status === "old") {
     model.updateLists(options);
+    if (options.active) itemsView.update(model.getCurrentlyActiveList());
     listsView.update(model.lists);
     model.upload();
   } else if (action === "create") {
@@ -26,10 +29,35 @@ const listsController = (action, options) => {
   }
 };
 
+/**
+ * The controller for items
+ * @param {string} action - save / create / delete
+ * @param {object} [options] - status: new / old, name, id, completed
+ */
+const itemsController = (action, options) => {
+  if (action === "save" && options.status === "new") {
+    model.saveItem(options);
+    itemsView.update(model.getCurrentlyActiveList());
+    model.upload();
+  } else if (action === "save" && options.status === "old") {
+    model.updateItems(options);
+    itemsView.update(model.getCurrentlyActiveList());
+    model.upload();
+  } else if (action === "create") {
+    itemsView.renderNewItem();
+  } else if (action === "delete") {
+    model.deleteItem(options.id);
+    itemsView.update(model.getCurrentlyActiveList());
+    model.upload();
+  }
+};
+
 const init = () => {
   listsView.update(model.lists);
-  listsView.addHandlerClick(listsController);
-  navbarView.addNavbarMobileListener(listsController);
+  itemsView.update(model.getCurrentlyActiveList());
+  listsView.addHandler(listsController);
+  itemsView.addHandler(itemsController);
+  navbarView.addNavbarMobileHandler(listsController);
 };
 
 init();

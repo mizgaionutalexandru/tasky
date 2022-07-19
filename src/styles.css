@@ -67,8 +67,7 @@ body{
 }
 
 .list-add__svg{
-    width: 3.6rem;
-    height: 3.6rem;
+    width: 100%;
 }
 
 .list-add--mobile{
@@ -341,11 +340,11 @@ body{
     height: var(--width);
 }
 
-.item__label{
+.item__text{
     position: relative;
 }
 
-.item__label::before{
+.item__text::before{
     content: "";
     background: url('./assets/checkbox-empty.svg');
     background-position: center;
@@ -357,7 +356,7 @@ body{
     cursor: pointer;
 }
 
-.item:focus-visible .item__label::after{
+.item:focus-visible .item__text::after{
     content: "";
     background: url('./assets/arrow.svg');
     background-position: center;
@@ -386,7 +385,7 @@ body{
     
 }
 
-.item__label__input{
+.item__text__input{
     border: 0;
     outline: 0;
     font-size: 2.4rem;
@@ -437,11 +436,11 @@ body{
     cursor: pointer;
 }
 
-.item--completed .item__label{
+.item--completed .item__text{
     text-decoration:line-through
 }
 
- .item--completed .item__label::before{
+ .item--completed .item__text::before{
     content: "";
     background: url('./assets/checkbox-filled.svg');
     background-position: center;
