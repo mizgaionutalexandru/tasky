@@ -288,7 +288,7 @@ class ItemsView {
         <div class="item__info">
             <input tabindex="-1" class="item__input" type="checkbox" />
             <label class="item__text">
-                <input class="item__text__input" type="text">
+                <input class="item__text__input" type="text" maxlength=64>
             </label>
         </div>
     </li>`;

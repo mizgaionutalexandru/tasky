@@ -1,10 +1,10 @@
 import { qs, qsa } from "../helpers.js";
-import { ACTION_KEY, MOBILE_THRESHOLD } from "../config.js";
+import { ACTION_KEY, MOBILE_NAVBAR_THRESHOLD } from "../config.js";
 
 class NavbarView {
   _parentElement = qs(".mobile-aside");
   _navContainer = qs(".nav-container");
-  _areListsShown = window.innerWidth <= MOBILE_THRESHOLD ? false : true;
+  _areListsShown = window.innerWidth <= MOBILE_NAVBAR_THRESHOLD ? false : true;
 
   addNavbarMobileHandler(handler) {
     this._parentElement.addEventListener("click", (e) => {
@@ -74,12 +74,18 @@ class NavbarView {
     });
 
     window.addEventListener("load", (e) => {
-      if (window.innerWidth <= MOBILE_THRESHOLD && qs(".nav-container--hidden-mobile"))
+      if (
+        window.innerWidth <= MOBILE_NAVBAR_THRESHOLD &&
+        qs(".nav-container--hidden-mobile")
+      )
         this._makeListsNotTabbable();
     });
 
     window.addEventListener("resize", (e) => {
-      if (window.innerWidth <= MOBILE_THRESHOLD && qs(".nav-container--hidden-mobile"))
+      if (
+        window.innerWidth <= MOBILE_NAVBAR_THRESHOLD &&
+        qs(".nav-container--hidden-mobile")
+      )
         this._makeListsNotTabbable();
       else this._makeListsTabbable();
     });

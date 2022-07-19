@@ -163,7 +163,7 @@ body{
     color: var(--grey-one);
     border-bottom: 1px solid var(--grey-three);
     width: 5rem;
-    min-width: 5rem;
+    max-width: 12.8rem;
 }
 
 .list__options-cta {
@@ -396,7 +396,7 @@ body{
     color: var(--grey-one);
     border-bottom: 1px solid var(--grey-three);
     width: 5rem;
-    min-width: 5rem;
+    max-width: 52rem;
 }
 
 .item__options-cta {

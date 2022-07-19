@@ -289,7 +289,7 @@ class ListsView {
     const markup = `
     <li tabindex="0" class="list list--new">
         <span class="list__name">
-            <input class="list__name__input" type="text">
+            <input class="list__name__input" type="text" maxlength=10>
         </span>
     </li>`;
     this._listsContainer.insertAdjacentHTML("beforeend", markup);
