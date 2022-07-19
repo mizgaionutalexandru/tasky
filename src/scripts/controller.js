@@ -25,6 +25,7 @@ const listsController = (action, options) => {
   } else if (action === "delete") {
     model.deleteList(options.id);
     listsView.update(model.lists);
+    itemsView.update(model.getCurrentlyActiveList());
     model.upload();
   }
 };
@@ -41,7 +42,8 @@ const itemsController = (action, options) => {
     model.upload();
   } else if (action === "save" && options.status === "old") {
     model.updateItems(options);
-    itemsView.update(model.getCurrentlyActiveList());
+    if (options.modify !== "completed") itemsView.update(model.getCurrentlyActiveList());
+    // Don't render the whole container for the complete toggle
     model.upload();
   } else if (action === "create") {
     itemsView.renderNewItem();

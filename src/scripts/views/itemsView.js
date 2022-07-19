@@ -196,7 +196,9 @@ class ItemsView {
       modify: "completed",
     });
     // Focus the modified item
-    return qs(`[data-id=${itemId}]`).focus();
+    const item = qs(`[data-id=${itemId}]`);
+    item.classList.toggle("item--completed");
+    return item.focus();
   }
 
   /**
