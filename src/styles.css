@@ -353,6 +353,9 @@ body{
     height: 3rem;
     position: absolute;
     left: calc( -1 * var(--width) - var(--gap));
+}
+
+.item:not(.item--new) .item__text::before{
     cursor: pointer;
 }
 
@@ -458,7 +461,7 @@ body{
 
 
 .item__options {
-    display: none;
+    display: block;
     list-style-type: none;
     position: absolute;
     top:100%;
@@ -468,6 +471,12 @@ body{
     width: 20%;
     border: 1px solid var(--grey-three);
     font-size: 2rem;
+
+    animation-name: slide;
+    animation-duration: 150ms;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    transform-origin: top;
 }
 
 .item__option {
@@ -478,6 +487,7 @@ body{
     padding: 0.4rem 1.2rem 0.4rem 1.2rem;
     transition: background-color 100ms ease-in;
     cursor: pointer;
+    outline: 0;
 }
 
 .item__option__icon--modify{
@@ -495,7 +505,8 @@ body{
     border-bottom: 1px solid var(--grey-three);
 }
 
-.item__option:hover{
+.item__option:hover,
+.item__option:focus-visible{
     background-color: var(--grey-four);
 }
 
