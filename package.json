@@ -2,7 +2,6 @@
   "name": "tasky",
   "version": "1.0.0",
   "description": "a simple and intuitive todo app",
-  "main": "index.js",
   "scripts": {
     "start": "parcel ./src/index.html",
     "build": "parcel build ./src/*.html --public-url ./ --dist-dir ./dist"
