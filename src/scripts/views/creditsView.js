@@ -33,6 +33,7 @@ class CreditsView {
   }
 
   _showCredits() {
+    this._areCreditsShown = true;
     this._creditsContainer.classList.toggle("credits--hidden");
     qsa(".credits-link").forEach((a) => {
       a.tabIndex = "0";
@@ -40,6 +41,7 @@ class CreditsView {
   }
 
   _hideCredits() {
+    this._areCreditsShown = false;
     this._creditsContainer.classList.toggle("credits--hidden");
     qsa(".credits-link").forEach((a) => {
       a.tabIndex = "-1";
