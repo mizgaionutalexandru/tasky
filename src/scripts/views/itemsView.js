@@ -1,5 +1,5 @@
 import { makeId, qs } from "../helpers.js";
-import { ACTION_KEY, OPTIONS_KEY } from "../config.js";
+import { ACTION_KEY, MOBILE_NAVBAR_THRESHOLD, OPTIONS_KEY } from "../config.js";
 
 class ItemsView {
   _parentElement = qs(".content-container");
@@ -360,6 +360,8 @@ class ItemsView {
     <div class="message_text">No lists yet.<br> Create one bottom left!</div>
   </div>`;
     this._parentElement.innerHTML = markup;
+    if (window.innerWidth <= MOBILE_NAVBAR_THRESHOLD) qs(".list-add--mobile").focus();
+    else qs(".list-add").focus();
   }
 
   _renderNoItemsMessage() {
