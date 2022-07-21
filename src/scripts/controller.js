@@ -3,6 +3,7 @@ import listsView from "./views/listsView";
 import itemsView from "./views/itemsView";
 import navbarView from "./views/navbarView";
 import creditsView from "./views/creditsView";
+import hiddenView from "./views/hiddenView";
 import * as model from "./model.js";
 
 /**

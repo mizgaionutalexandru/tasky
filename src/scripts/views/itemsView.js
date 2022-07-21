@@ -283,7 +283,7 @@ class ItemsView {
     this._isNewItemInputOpen = true;
     const itemsContainer = qs(".items");
     const markup = `
-    ${itemsContainer ? "" : '<ul class="items">'}
+    ${itemsContainer ? "" : '<ul class="items" id="items">'}
     <li tabindex="0" class="item item--new">            
         <div class="item__info">
             <input tabindex="-1" class="item__input" type="checkbox" />
@@ -338,7 +338,7 @@ class ItemsView {
 
   _updateListItems(items) {
     qs(".items")?.remove();
-    let markup = `<ul class="items">`;
+    let markup = `<ul class="items" id="items">`;
     items.forEach((item) => {
       markup += this._getItemMarkup(item);
     });
