@@ -80,7 +80,7 @@ export const updateItems = (options) => {
 export const deleteList = (id) => {
   lists = lists.filter((list) => list.id != id);
   // If the users deletes the currently active list, make the first one the active one
-  if (!lists.some((list) => list.active === true)) lists[0].active = true;
+  if (!lists.some((list) => list.active === true) && lists[0]) lists[0].active = true;
 };
 
 export const deleteItem = (id) => {

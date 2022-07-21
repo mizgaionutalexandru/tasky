@@ -3,7 +3,6 @@ import { ACTION_KEY, OPTIONS_KEY } from "../config.js";
 
 class ItemsView {
   _parentElement = qs(".content-container");
-  _itemsContainer = qs(".items");
   _isNewItemInputOpen = false;
   _currentlyModifiedItemId = null;
   _itemOptionsOpen;
@@ -225,7 +224,6 @@ class ItemsView {
    */
   _saveModifiedItem(handler) {
     if (!this._currentlyModifiedItemId) return;
-    console.log(qs(".item__text__input").dataset.oldText);
     handler("save", {
       status: "old",
       text: qs(".item__text__input").value,
@@ -283,7 +281,9 @@ class ItemsView {
    */
   renderNewItem() {
     this._isNewItemInputOpen = true;
+    const itemsContainer = qs(".items");
     const markup = `
+    ${itemsContainer ? "" : '<ul class="items">'}
     <li tabindex="0" class="item item--new">            
         <div class="item__info">
             <input tabindex="-1" class="item__input" type="checkbox" />
@@ -291,8 +291,13 @@ class ItemsView {
                 <input class="item__text__input" type="text" maxlength=64>
             </label>
         </div>
-    </li>`;
-    this._itemsContainer.insertAdjacentHTML("beforeend", markup);
+    </li>
+    ${itemsContainer ? "" : "</ul>"}`;
+    if (itemsContainer) itemsContainer.insertAdjacentHTML("beforeend", markup);
+    else {
+      qs(".message").remove();
+      this._parentElement.insertAdjacentHTML("beforeend", markup);
+    }
 
     // New Item Input - make it stretch as it gets more content
     const itemInput = qs(".item__text__input");
@@ -309,23 +314,72 @@ class ItemsView {
    * @param {array} data - the active list
    */
   update(data) {
-    if (!data) return; // TODO: instructions for the user
+    if (!data) return this._renderNoListsMessage();
     this._data = data; // the active list
+    if (data.items.length === 0) {
+      this._renderNoItemsMessage();
+      this._updateListName(this._data.name);
+      return;
+    }
+    qs(".message")?.remove();
     this._updateListName(this._data.name);
     this._updateListItems(this._data.items);
   }
 
   _updateListName(name) {
-    qs(".active-list-title").innerText = `${name} list`;
+    qs(".content-header")?.remove();
+    const markup = `
+    <header class="content-header">
+      <span class="active-list-title">${name} list</span>
+      <button tabindex="0" class="item-add">New item +</button>
+    </header>`;
+    this._parentElement.insertAdjacentHTML("afterbegin", markup);
   }
 
   _updateListItems(items) {
-    this._itemsContainer.innerHTML = "";
-    let markup = "";
+    qs(".items")?.remove();
+    let markup = `<ul class="items">`;
     items.forEach((item) => {
       markup += this._getItemMarkup(item);
     });
-    this._itemsContainer.insertAdjacentHTML("beforeend", markup);
+    markup += `</ul>`;
+    this._parentElement.insertAdjacentHTML("beforeend", markup);
+  }
+
+  _renderNoListsMessage() {
+    const markup = `
+    <div class="message">
+    <div class="message_icon">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.6638 0.049221C14.0834 0.302345 12.1006 0.857815 9.99118 1.90547C5.30134 4.23281 1.89118 8.44453 0.569306 13.5563C-0.0846004 16.0734 -0.161944 18.9773 0.351337 21.5227C1.46227 27.007 5.04118 31.6688 10.0193 34.1086C11.3974 34.7836 12.2271 35.0859 13.5982 35.4375C15.2013 35.8453 16.2138 35.9648 18.0349 35.9648C20.2076 35.9578 21.6701 35.7328 23.6248 35.093C28.2443 33.5672 31.9779 30.3047 34.1435 25.9102C35.0365 24.1031 35.5709 22.3383 35.8732 20.2148C36.0138 19.2375 35.9927 16.6781 35.831 15.5742C35.6834 14.4844 35.2685 12.8109 34.9099 11.8406C34.5443 10.8422 33.6302 9.0211 33.0677 8.15625C31.3591 5.56172 28.9474 3.3961 26.2123 1.99688C24.1381 0.942188 22.1341 0.344532 19.8349 0.105469C18.9771 0.0140648 17.3107 -0.014061 16.6638 0.049221ZM19.406 2.46797C25.1787 2.98828 30.2131 6.71484 32.4349 12.0938C33.3349 14.2594 33.7498 16.9945 33.5459 19.3008C33.0466 24.8203 29.7701 29.6016 24.8552 31.9922C23.3295 32.7375 21.9091 33.1805 20.2498 33.4406C19.1459 33.6164 16.8607 33.6164 15.7849 33.4477C12.4099 32.9133 9.55524 31.507 7.16462 29.2008C2.29196 24.4898 1.01931 17.2406 4.00056 11.1445C4.83024 9.44297 5.82165 8.09297 7.20681 6.76406C10.4623 3.62109 14.9201 2.05313 19.406 2.46797Z" fill="#EA5959"/>
+          <path d="M12.5855 12.6703C12.2902 12.8742 12.0933 13.1414 12.03 13.4227C12.0089 13.5422 12.0019 14.4562 12.023 15.4547C12.0581 17.2195 12.0652 17.2687 12.2269 17.5008C12.4167 17.768 12.8667 17.993 13.2042 18C13.4925 18 13.9355 17.782 14.1253 17.5359C14.3855 17.2055 14.4206 16.875 14.3996 15.0609C14.3785 13.3805 14.3714 13.3172 14.2097 13.057C13.8863 12.5367 13.0706 12.3398 12.5855 12.6703Z" fill="#EA5959"/>
+          <path d="M22.3594 12.5648C22.0992 12.6633 21.8391 12.9094 21.7195 13.1766C21.6 13.4297 21.5859 13.6617 21.5859 15.2227C21.5859 17.1773 21.6211 17.3602 22.0711 17.7398C22.6125 18.1969 23.5125 18.007 23.8359 17.3602C23.9625 17.1141 23.9766 16.9453 23.9766 15.2016C23.9766 13.3523 23.9766 13.3031 23.8148 13.0711C23.5617 12.6914 23.2383 12.5156 22.8234 12.5227C22.6266 12.5227 22.4156 12.5438 22.3594 12.5648Z" fill="#EA5959"/>
+          <path d="M11.2359 22.7813C10.7156 22.9359 10.4062 23.3719 10.4062 23.9414C10.4062 24.3633 10.5258 24.5883 10.9758 24.9891C11.918 25.8328 13.5703 26.7398 14.8852 27.1266C16.0734 27.4852 16.9383 27.5836 18.3867 27.5414C20.0883 27.4852 21.15 27.2391 22.6195 26.543C23.7937 25.9875 25.1297 25.0313 25.3336 24.5883C25.6711 23.8922 25.2492 23.0484 24.4898 22.8867C24.082 22.8023 23.8008 22.9219 23.0836 23.4563C21.9656 24.3 20.7422 24.8414 19.3992 25.0734C18.4219 25.2422 16.868 25.1789 15.9328 24.9328C14.6742 24.5953 13.507 23.9977 12.607 23.2313C12.0516 22.7531 11.7 22.6406 11.2359 22.7813Z" fill="#EA5959"/>
+        </svg>              
+    </div>
+    <div class="message_text">No lists yet.<br> Create one bottom left!</div>
+  </div>`;
+    this._parentElement.innerHTML = markup;
+  }
+
+  _renderNoItemsMessage() {
+    const markup = `
+    <header class="content-header">
+      <span class="active-list-title"></span>
+      <button tabindex="0" class="item-add">New item +</button>
+    </header>
+    <div class="message">
+    <div class="message_icon">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.6638 0.049221C14.0834 0.302345 12.1006 0.857815 9.99118 1.90547C5.30134 4.23281 1.89118 8.44453 0.569306 13.5563C-0.0846004 16.0734 -0.161944 18.9773 0.351337 21.5227C1.46227 27.007 5.04118 31.6688 10.0193 34.1086C11.3974 34.7836 12.2271 35.0859 13.5982 35.4375C15.2013 35.8453 16.2138 35.9648 18.0349 35.9648C20.2076 35.9578 21.6701 35.7328 23.6248 35.093C28.2443 33.5672 31.9779 30.3047 34.1435 25.9102C35.0365 24.1031 35.5709 22.3383 35.8732 20.2148C36.0138 19.2375 35.9927 16.6781 35.831 15.5742C35.6834 14.4844 35.2685 12.8109 34.9099 11.8406C34.5443 10.8422 33.6302 9.0211 33.0677 8.15625C31.3591 5.56172 28.9474 3.3961 26.2123 1.99688C24.1381 0.942188 22.1341 0.344532 19.8349 0.105469C18.9771 0.0140648 17.3107 -0.014061 16.6638 0.049221ZM19.406 2.46797C25.1787 2.98828 30.2131 6.71484 32.4349 12.0938C33.3349 14.2594 33.7498 16.9945 33.5459 19.3008C33.0466 24.8203 29.7701 29.6016 24.8552 31.9922C23.3295 32.7375 21.9091 33.1805 20.2498 33.4406C19.1459 33.6164 16.8607 33.6164 15.7849 33.4477C12.4099 32.9133 9.55524 31.507 7.16462 29.2008C2.29196 24.4898 1.01931 17.2406 4.00056 11.1445C4.83024 9.44297 5.82165 8.09297 7.20681 6.76406C10.4623 3.62109 14.9201 2.05313 19.406 2.46797Z" fill="#EA5959"/>
+          <path d="M12.5855 12.6703C12.2902 12.8742 12.0933 13.1414 12.03 13.4227C12.0089 13.5422 12.0019 14.4562 12.023 15.4547C12.0581 17.2195 12.0652 17.2687 12.2269 17.5008C12.4167 17.768 12.8667 17.993 13.2042 18C13.4925 18 13.9355 17.782 14.1253 17.5359C14.3855 17.2055 14.4206 16.875 14.3996 15.0609C14.3785 13.3805 14.3714 13.3172 14.2097 13.057C13.8863 12.5367 13.0706 12.3398 12.5855 12.6703Z" fill="#EA5959"/>
+          <path d="M22.3594 12.5648C22.0992 12.6633 21.8391 12.9094 21.7195 13.1766C21.6 13.4297 21.5859 13.6617 21.5859 15.2227C21.5859 17.1773 21.6211 17.3602 22.0711 17.7398C22.6125 18.1969 23.5125 18.007 23.8359 17.3602C23.9625 17.1141 23.9766 16.9453 23.9766 15.2016C23.9766 13.3523 23.9766 13.3031 23.8148 13.0711C23.5617 12.6914 23.2383 12.5156 22.8234 12.5227C22.6266 12.5227 22.4156 12.5438 22.3594 12.5648Z" fill="#EA5959"/>
+          <path d="M11.2359 22.7813C10.7156 22.9359 10.4062 23.3719 10.4062 23.9414C10.4062 24.3633 10.5258 24.5883 10.9758 24.9891C11.918 25.8328 13.5703 26.7398 14.8852 27.1266C16.0734 27.4852 16.9383 27.5836 18.3867 27.5414C20.0883 27.4852 21.15 27.2391 22.6195 26.543C23.7937 25.9875 25.1297 25.0313 25.3336 24.5883C25.6711 23.8922 25.2492 23.0484 24.4898 22.8867C24.082 22.8023 23.8008 22.9219 23.0836 23.4563C21.9656 24.3 20.7422 24.8414 19.3992 25.0734C18.4219 25.2422 16.868 25.1789 15.9328 24.9328C14.6742 24.5953 13.507 23.9977 12.607 23.2313C12.0516 22.7531 11.7 22.6406 11.2359 22.7813Z" fill="#EA5959"/>
+        </svg>              
+    </div>
+    <div class="message_text">No items yet.<br> Create one top right!</div>
+  </div>`;
+    this._parentElement.innerHTML = markup;
   }
 
   /**

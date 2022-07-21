@@ -63,5 +63,5 @@ const init = () => {
   navbarView.addNavbarMobileHandler(listsController);
 };
 
-init();
 console.log("Page started! 👍");
+init();
