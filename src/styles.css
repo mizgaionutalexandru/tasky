@@ -114,10 +114,40 @@ body {
 .lists {
   list-style-type: none;
   margin-top: max(1.28rem, 14vh);
+  overflow-y: scroll;
+  max-height: 36rem;
+  margin-right: 0.2rem;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--grey-four);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ea5757cc;
+  border-radius: 10px;
+  border: 1px solid var(--grey-four);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #ea5959;
+}
+
+@supports (scrollbar-color: red blue) {
+  * {
+    scrollbar-color: #ea5757cc var(--grey-four);
+    scrollbar-width: auto;
+  }
 }
 
 .list {
   width: 15.6rem;
+  height: 4rem;
   display: flex;
   margin-inline: auto;
   justify-content: space-between;
@@ -307,6 +337,9 @@ body {
 
 .items {
   list-style-type: none;
+  overflow-y: scroll;
+  max-height: 60%;
+  margin-right: 0.2rem;
 }
 
 .item__info {
