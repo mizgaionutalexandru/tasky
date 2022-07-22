@@ -18,8 +18,14 @@ Have a look at the live version [here](https://tasky-mionut.netlify.app/)
 
 - Create unlimited lists, update their name or delete them
 - Create unlimited items, update their description or delete them
+- Mark items as completed
 - Full keyboard accessibility
 - Mobile version
+
+## Things that can be added later
+
+- More input length restrictions and an error notification
+- Notification congratulating the user after he marked all items as completed
 
 ## Contact me by [mail](mailto:mizgaionutalexandru@gmail.com)
 
