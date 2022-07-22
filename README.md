@@ -16,11 +16,10 @@ Have a look at the live version [here](https://tasky-mionut.netlify.app/)
 
 ## Features
 
-The users can:
-
 - Create unlimited lists, update their name or delete them
 - Create unlimited items, update their description or delete them
 - Full keyboard accessibility
+- Mobile version
 
 ## Contact me by [mail](mailto:mizgaionutalexandru@gmail.com)
 
