@@ -147,7 +147,7 @@ class ListsView {
     const oldName = list.querySelector(".list__name").innerText;
     const markup = `
         <span class="list__name">
-            <input class="list__name__input" type="text" value='${oldName}'  data-old-name='${oldName}'>
+            <input class="list__name__input" type="text" value='${oldName}'  data-old-name='${oldName}' maxlength=10>
         </span>`;
     list.innerHTML = markup;
     list.classList.remove("list--options-visible");

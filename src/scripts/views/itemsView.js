@@ -140,7 +140,7 @@ class ItemsView {
     <div class="item__info">
         <input tabindex="-1" class="item__input" type="checkbox" />
         <label class="item__text" for="item_3">
-            <input class="item__text__input" type="text" value='${oldText}' data-old-text='${oldText}'>
+            <input class="item__text__input" type="text" value='${oldText}' data-old-text='${oldText}' maxlength=64>
         </label>
     </div>`;
     item.innerHTML = markup;
