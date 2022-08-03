@@ -6,7 +6,7 @@
 
 A simple first public project where I got to practice more and strengthen
 some of the skills i've acquired in the last few months.
-Have a look at the live version [here](https://tasky-mionut.netlify.app/){:target="\_blank"}
+Have a look at the live version [here](https://tasky-mionut.netlify.app/)
 
 ## 🔨 Built with
 
